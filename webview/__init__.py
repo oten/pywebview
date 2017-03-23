@@ -48,68 +48,9 @@ _webview_ready = Event()
 def _initialize_imports():
     global _initialized, gui
     import_error = False
-
-    if not _initialized:
-        if platform.system() == "Darwin":
-            if not config.use_qt:
-                try:
-                    import webview.cocoa as gui
-                except ImportError:
-                    logger.exception("PyObjC cannot be loaded")
-                    import_error = True
-
-            if import_error or config.use_qt:
-                try:
-                    import webview.qt as gui
-                    logger.info("Using QT")
-                except ImportError as e:
-                    # Panic
-                    logger.exception("QT cannot be loaded")
-                    raise Exception("You must have either PyObjC (for Cocoa support) or Qt with Python bindings installed in order to use this library.")
-
-        elif platform.system() == "Linux":
-            if not config.use_qt:
-                try:
-                    import webview.gtk as gui
-                    logger.info("Using GTK")
-                except ImportError as e:
-                    logger.exception("GTK cannot be loaded")
-                    import_error = True
-
-            if import_error or config["USE_QT"]:
-                try:
-                    # If GTK is not found, then try QT
-                    import webview.qt as gui
-                    logger.info("Using QT")
-                except ImportError as e:
-                    # Panic
-                    logger.exception("QT cannot be loaded")
-                    raise Exception("You must have either QT or GTK with Python extensions installed in order to use this library.")
-
-        elif platform.system() == "Windows":
-            #Try .NET first unless use_win32 flag is set
-            if not config.use_win32:
-                try:
-                    import webview.winforms as gui
-                    logger.info("Using .NET")
-                except ImportError as e:
-                    logger.exception("pythonnet cannot be loaded")
-                    import_error = True
-
-
-            if import_error or config.use_win32:
-                try:
-                    # If .NET is not found, then try Win32
-                    import webview.win32 as gui
-                    logger.info("Using Win32")
-                except ImportError as e:
-                    # Panic
-                    logger.exception("PyWin32 cannot be loaded")
-                    raise Exception("You must have either pythonnet or pywin32 installed in order to use this library.")
-        else:
-            raise Exception("Unsupported platform. Only Windows, Linux and OS X are supported.")
-
-        _initialized = True
+    import webview.qt as gui
+    logger.info("Using QT")
+    _initialized = True
 
 
 def create_file_dialog(dialog_type=OPEN_DIALOG, directory='', allow_multiple=False, save_filename=''):
